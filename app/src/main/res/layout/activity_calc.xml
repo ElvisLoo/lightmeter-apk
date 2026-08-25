@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bg"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="互易律计算器"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            android:textColor="@color/text"
+            android:layout_marginTop="8dp"
+            android:layout_gravity="center_horizontal" />
+
+        <!-- 块 1：EV + 光圈 → 快门 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@drawable/bg_card"
+            android:padding="16dp"
+            android:layout_marginTop="14dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="① 已知 EV@ISO + 光圈 → 快门"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:textColor="@color/text" />
+
+            <EditText
+                android:id="@+id/evEdit"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="EV@ISO，例如 15"
+                android:inputType="numberDecimal"
+                android:textColor="@color/text"
+                android:textColorHint="@color/muted"
+                android:layout_marginTop="10dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="光圈"
+                android:textSize="13sp"
+                android:textColor="@color/muted"
+                android:layout_marginTop="8dp" />
+
+            <Spinner
+                android:id="@+id/spinF"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp" />
+
+            <Button
+                android:id="@+id/btnShutter"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="算快门"
+                android:layout_marginTop="10dp"
+                android:backgroundTint="@color/accent"
+                android:textColor="@color/bg" />
+
+            <TextView
+                android:id="@+id/resShutter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="--"
+                android:textSize="18sp"
+                android:textColor="@color/accent2"
+                android:layout_marginTop="8dp" />
+        </LinearLayout>
+
+        <!-- 块 2：光圈 + 快门 → EV -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@drawable/bg_card"
+            android:padding="16dp"
+            android:layout_marginTop="14dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="② 已知光圈 + 快门 → EV@ISO100"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:textColor="@color/text" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="光圈"
+                android:textSize="13sp"
+                android:textColor="@color/muted"
+                android:layout_marginTop="10dp" />
+
+            <Spinner
+                android:id="@+id/spinF2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp" />
+
+            <EditText
+                android:id="@+id/shutterEdit"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="快门：分数写 1/125，整秒写 2"
+                android:inputType="text"
+                android:textColor="@color/text"
+                android:textColorHint="@color/muted"
+                android:layout_marginTop="10dp" />
+
+            <Button
+                android:id="@+id/btnEv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="算 EV"
+                android:layout_marginTop="10dp"
+                android:backgroundTint="@color/accent"
+                android:textColor="@color/bg" />
+
+            <TextView
+                android:id="@+id/resEv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="--"
+                android:textSize="18sp"
+                android:textColor="@color/accent2"
+                android:layout_marginTop="8dp" />
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/btnBack"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="← 返回测光"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="20dp"
+            android:backgroundTint="@color/surface"
+            android:textColor="@color/text" />
+
+    </LinearLayout>
+</ScrollView>

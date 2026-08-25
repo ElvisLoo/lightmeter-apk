@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">胶片测光表</string>
+    <string-array name="apertures">
+        <item>2.8</item>
+        <item>4</item>
+        <item>5.6</item>
+        <item>8</item>
+        <item>11</item>
+        <item>16</item>
+        <item>22</item>
+    </string-array>
+</resources>
