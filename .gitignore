@@ -8,3 +8,12 @@
 .externalNativeBuild
 .cxx
 app/build/
+
+# 构建产物
+build/
+.gradle/
+local.properties
+*.apk
+*.log
+*.jks
+keystore.properties

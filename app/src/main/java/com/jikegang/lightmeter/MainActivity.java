@@ -5,6 +5,7 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -33,6 +34,11 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         super.onCreate(b);
         setContentView(R.layout.activity_main);
 
+        // 转屏 / 进程被系统回收后恢复用户选择的 ISO。
+        // 不恢复的话会静默回到 XML 里写死的 400，
+        // 推荐快门整体偏 4 档，负片直接欠曝。
+        if (b != null) iso = b.getInt("iso", iso);
+
         luxView = findViewById(R.id.lux);
         fcView = findViewById(R.id.fc);
         evView = findViewById(R.id.ev);
@@ -44,6 +50,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         if (sm != null) light = sm.getDefaultSensor(Sensor.TYPE_LIGHT);
 
         ChipGroup cg = findViewById(R.id.isoGroup);
+        int restoreId = isoToChipId(iso);
+        if (restoreId != View.NO_ID) cg.check(restoreId);
         cg.setOnCheckedChangeListener((group, checkedId) -> {
             int[] map = {
                     R.id.iso100, 100, R.id.iso200, 200, R.id.iso400, 400,
@@ -125,5 +133,24 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         }
         if (best < 1) return "1/" + (int) Math.round(1.0 / best);
         return String.format(Locale.US, "%.0f\"", best);
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle out) {
+        super.onSaveInstanceState(out);
+        out.putInt("iso", iso);
+    }
+
+    /** ISO 数值 → 对应 Chip 的 id；不在列表内返回 NO_ID */
+    private int isoToChipId(int v) {
+        switch (v) {
+            case 100: return R.id.iso100;
+            case 200: return R.id.iso200;
+            case 400: return R.id.iso400;
+            case 800: return R.id.iso800;
+            case 1600: return R.id.iso1600;
+            case 3200: return R.id.iso3200;
+            default: return View.NO_ID;
+        }
     }
 }

@@ -59,6 +59,9 @@ public class CalcActivity extends AppCompatActivity {
         });
 
         findViewById(R.id.btnBack).setOnClickListener(v -> finish());
+
+        // 必须在 View 都绑定完、监听器挂好之后恢复，否则 setText 会触发计算副作用
+        restoreState(b);
     }
 
     private double parseShutter(String s) {
@@ -82,5 +85,29 @@ public class CalcActivity extends AppCompatActivity {
         }
         if (best < 1) return "1/" + (int) Math.round(1.0 / best);
         return String.format(Locale.US, "%.0f\"", best);
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle out) {
+        super.onSaveInstanceState(out);
+        // 转屏或切到别的 App 再回来，Activity 会被重建。
+        // 不保存的话输入框清空、结果变回 "--"，用户得从头再算一遍。
+        out.putCharSequence("ev", ((EditText) findViewById(R.id.evEdit)).getText());
+        out.putCharSequence("sh", ((EditText) findViewById(R.id.shutterEdit)).getText());
+        out.putInt("f1", ((Spinner) findViewById(R.id.spinF)).getSelectedItemPosition());
+        out.putInt("f2", ((Spinner) findViewById(R.id.spinF2)).getSelectedItemPosition());
+        out.putCharSequence("resShutter", ((TextView) findViewById(R.id.resShutter)).getText());
+        out.putCharSequence("resEv", ((TextView) findViewById(R.id.resEv)).getText());
+    }
+
+    /** 在 onCreate 末尾调用，恢复上次的输入与结果 */
+    private void restoreState(Bundle b) {
+        if (b == null) return;
+        ((EditText) findViewById(R.id.evEdit)).setText(b.getCharSequence("ev", ""));
+        ((EditText) findViewById(R.id.shutterEdit)).setText(b.getCharSequence("sh", ""));
+        ((Spinner) findViewById(R.id.spinF)).setSelection(b.getInt("f1", 0));
+        ((Spinner) findViewById(R.id.spinF2)).setSelection(b.getInt("f2", 0));
+        ((TextView) findViewById(R.id.resShutter)).setText(b.getCharSequence("resShutter", "--"));
+        ((TextView) findViewById(R.id.resEv)).setText(b.getCharSequence("resEv", "--"));
     }
 }
