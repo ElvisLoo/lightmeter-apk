@@ -17,3 +17,9 @@
 # 保留行号，崩溃栈才有意义
 -keepattributes SourceFile,LineNumberTable
 -renamesourcefileattribute SourceFile
+
+# 倒易律补偿：纯计算类，但会被自定义 ArrayAdapter 与 Spinner 回调引用，
+# 保留类名便于混淆后的崩溃栈定位（ProGuard 会保留被引用到的成员，
+# 这里加规则是为了保证 toString/枚举式访问不被裁掉）
+-keep class com.jikegang.lightmeter.Reciprocity { *; }
+-keep class com.jikegang.lightmeter.Reciprocity$Profile { *; }
