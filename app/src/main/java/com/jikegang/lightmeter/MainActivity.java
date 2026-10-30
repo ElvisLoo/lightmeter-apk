@@ -22,6 +22,9 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private TextView luxView, fcView, evView, evIsoView, recView, statusView;
     private int iso = 400;
     private double lastLux = 0;
+    // 仅用于「恢复出来的」照度：先让界面显示上次的值，等真实回调来了再更新，
+    // 避免转屏瞬间闪一屏 EV 0。
+    private double pendingLux = -1;
 
     private final double[] F_ARR = {2.8, 4, 5.6, 8, 11, 16};
     private final double[] SHUTTERS = {
@@ -34,10 +37,17 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         super.onCreate(b);
         setContentView(R.layout.activity_main);
 
-        // 转屏 / 进程被系统回收后恢复用户选择的 ISO。
-        // 不恢复的话会静默回到 XML 里写死的 400，
-        // 推荐快门整体偏 4 档，负片直接欠曝。
-        if (b != null) iso = b.getInt("iso", iso);
+        // 转屏 / 进程被系统回收后恢复状态。三样都要：
+        // 1) iso —— 不恢复会静默回到 XML 写死的 400，推荐快门整体偏 4 档，
+        //    负片直接欠曝；
+        // 2) lastLux —— 不恢复会先算出 EV 0 并闪一屏错误读数，
+        //    等下一次传感器回调才纠正，用户容易在这半秒里读到错的快门；
+        // 3) 提示语 —— 避免把「已恢复」误显示成「读取中」。
+        if (b != null) {
+            iso = b.getInt("iso", iso);
+            lastLux = b.getDouble("lux", 0);
+            if (lastLux > 0) pendingLux = lastLux;
+        }
 
         luxView = findViewById(R.id.lux);
         fcView = findViewById(R.id.fc);
@@ -68,6 +78,9 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
         findViewById(R.id.btnCalc).setOnClickListener(v ->
                 startActivity(new android.content.Intent(this, CalcActivity.class)));
+
+        // 恢复态下先把上次读数画出来，不等传感器回调。
+        if (pendingLux > 0) updateReadout();
     }
 
     @Override
@@ -75,7 +88,10 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         super.onResume();
         if (light != null) {
             sm.registerListener(this, light, SensorManager.SENSOR_DELAY_UI);
-            statusView.setText("对准光源，读取实时照度");
+            // 有恢复值时先说明是旧读数，避免用户拿转屏前的数值当实时结果。
+            statusView.setText(lastLux > 0
+                    ? "已恢复上次读数，等待传感器更新…"
+                    : "对准光源，读取实时照度");
         } else {
             statusView.setText("⚠ 此设备无环境光传感器，无法测光");
             Toast.makeText(this, "未检测到环境光传感器", Toast.LENGTH_LONG).show();
@@ -91,8 +107,13 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     @Override
     public void onSensorChanged(SensorEvent e) {
         if (e.sensor.getType() == Sensor.TYPE_LIGHT) {
+            boolean firstAfterRestore = pendingLux > 0;
             lastLux = e.values[0];
             updateReadout();
+            if (firstAfterRestore && pendingLux > 0) pendingLux = -1;
+            if (firstAfterRestore && statusView != null) {
+                statusView.setText("对准光源，读取实时照度");
+            }
         }
     }
 
@@ -139,6 +160,9 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     protected void onSaveInstanceState(Bundle out) {
         super.onSaveInstanceState(out);
         out.putInt("iso", iso);
+        // lastLux 不存的话，转屏后 readout 会按 0 lux 算，
+        // 屏幕上先出现一轮 f/16 → 1/8000 这种离谱推荐。
+        out.putDouble("lux", lastLux);
     }
 
     /** ISO 数值 → 对应 Chip 的 id；不在列表内返回 NO_ID */
