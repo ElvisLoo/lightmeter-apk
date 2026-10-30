@@ -17,3 +17,8 @@ local.properties
 *.log
 *.jks
 keystore.properties
+
+# 签名文件（绝不提交）
+keystore.properties
+*.jks
+*.keystore

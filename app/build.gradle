@@ -2,7 +2,27 @@ plugins {
     id 'com.android.application'
 }
 
+// 签名信息从 keystore.properties 读，绝不写进仓库。
+// 没这个文件时走 debug 签名（本地调试够用），但 release 上架必须提供。
+def keystorePropsFile = rootProject.file('keystore.properties')
+def keystoreProps = new Properties()
+if (keystorePropsFile.exists()) {
+    keystoreProps.load(new FileInputStream(keystorePropsFile))
+}
+def hasReleaseKey = keystorePropsFile.exists() && keystoreProps['storeFile']
+
 android {
+    signingConfigs {
+        if (hasReleaseKey) {
+            release {
+                storeFile file(keystoreProps['storeFile'])
+                storePassword keystoreProps['storePassword']
+                keyAlias keystoreProps['keyAlias']
+                keyPassword keystoreProps['keyPassword']
+            }
+        }
+    }
+
     namespace 'com.jikegang.lightmeter'
     compileSdk 34
 
@@ -16,9 +36,15 @@ android {
 
     buildTypes {
         release {
-            minifyEnabled false
-            // 用 debug 签名便于本地直接安装；正式上架请自建 release keystore
-            signingConfig signingConfigs.debug
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            // 有 release 密钥就用它；没有则退回 debug（仅够本地安装，不能上架）
+            signingConfig hasReleaseKey ? signingConfigs.release : signingConfigs.debug
+        }
+        debug {
+            applicationIdSuffix '.debug'
+            versionNameSuffix '-debug'
         }
     }
 
