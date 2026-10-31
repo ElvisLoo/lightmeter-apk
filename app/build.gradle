@@ -63,4 +63,11 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'com.google.android.material:material:1.11.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+
+    // 本地单测（JVM 上跑，不需要设备）
+    testImplementation 'junit:junit:4.13.2'
+    // android.jar 里的 org.json 是空壳（方法体全是 throw），
+    // 本地单测一调就 UnsupportedOperationException。
+    // 加这份纯 Java 实现作为测试期替代，逻辑与 Android 内置的一致。
+    testImplementation 'org.json:json:20240303'
 }

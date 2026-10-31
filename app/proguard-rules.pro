@@ -23,3 +23,9 @@
 # 这里加规则是为了保证 toString/枚举式访问不被裁掉）
 -keep class com.jikegang.lightmeter.Reciprocity { *; }
 -keep class com.jikegang.lightmeter.Reciprocity$Profile { *; }
+
+# 拍摄记录：ShotLog 内部用 org.json 拼装字段名（"at"/"ev"/...）。
+# R8 若把内部类 Entry 的访问方式改坏，读回来就是空记录 ——
+# 而且不会抛异常，用户只会发现"记录全没了"。
+-keep class com.jikegang.lightmeter.ShotLog { *; }
+-keep class com.jikegang.lightmeter.ShotLog$Entry { *; }

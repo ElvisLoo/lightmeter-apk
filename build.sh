@@ -7,6 +7,7 @@
 # 用法：
 #   ./build.sh debug
 #   ./build.sh release
+#   ./build.sh test
 #   ./build.sh clean
 
 set -euo pipefail
@@ -32,6 +33,7 @@ cd "$(dirname "$0")"
 case "${1:-debug}" in
   debug)   ./gradlew.bat assembleDebug --no-daemon ;;
   release) ./gradlew.bat assembleRelease --no-daemon ;;
+  test)    ./gradlew.bat testDebugUnitTest --no-daemon ;;
   clean)   ./gradlew.bat clean --no-daemon ;;
-  *) echo "用法: $0 [debug|release|clean]" >&2; exit 2 ;;
+  *) echo "用法: $0 [debug|release|test|clean]" >&2; exit 2 ;;
 esac

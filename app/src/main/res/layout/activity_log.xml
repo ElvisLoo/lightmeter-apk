@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/bg"
+    android:padding="16dp">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="拍摄记录"
+        android:textSize="22sp"
+        android:textStyle="bold"
+        android:textColor="@color/text" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="记下当时的参数，等冲洗出来对照着看。记录只存在本机。"
+        android:textSize="12sp"
+        android:textColor="@color/muted"
+        android:layout_marginTop="4dp" />
+
+    <!-- 当前读数 + 记一笔 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="@color/surface"
+        android:padding="14dp"
+        android:layout_marginTop="12dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="当前测光结果"
+            android:textSize="13sp"
+            android:textColor="@color/muted" />
+
+        <TextView
+            android:id="@+id/curReadout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="EV --"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:textColor="@color/accent2"
+            android:layout_marginTop="4dp" />
+
+        <EditText
+            android:id="@+id/noteEdit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="备注（可选），如「窗边」「日落」"
+            android:inputType="text"
+            android:textSize="14sp"
+            android:textColor="@color/text"
+            android:maxLength="24"
+            android:layout_marginTop="8dp" />
+
+        <Button
+            android:id="@+id/btnSave"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="记一笔"
+            android:layout_marginTop="10dp"
+            android:backgroundTint="@color/accent"
+            android:textColor="@color/bg" />
+    </LinearLayout>
+
+    <!-- 列表 -->
+    <ListView
+        android:id="@+id/logList"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:layout_marginTop="12dp"
+        android:divider="@color/surface"
+        android:dividerHeight="1dp" />
+
+    <TextView
+        android:id="@+id/emptyHint"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="还没有记录。测完光按上面的「记一笔」。"
+        android:textSize="13sp"
+        android:textColor="@color/muted"
+        android:gravity="center"
+        android:paddingTop="24dp" />
+
+    <!-- 底部操作 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="10dp">
+
+        <Button
+            android:id="@+id/btnExport"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="复制全部"
+            android:backgroundTint="@color/surface"
+            android:textColor="@color/text" />
+
+        <Button
+            android:id="@+id/btnClear"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="清空"
+            android:layout_marginStart="8dp"
+            android:backgroundTint="@color/surface"
+            android:textColor="@color/muted" />
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/btnBackFromLog"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="← 返回测光"
+        android:layout_marginTop="8dp"
+        android:backgroundTint="@color/surface"
+        android:textColor="@color/text" />
+
+</LinearLayout>

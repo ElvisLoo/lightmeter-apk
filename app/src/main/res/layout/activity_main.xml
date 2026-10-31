@@ -194,5 +194,14 @@
             android:backgroundTint="@color/accent"
             android:textColor="@color/bg" />
 
+        <Button
+            android:id="@+id/btnLog"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="拍摄记录 →"
+            android:layout_marginTop="10dp"
+            android:backgroundTint="@color/surface"
+            android:textColor="@color/text" />
+
     </LinearLayout>
 </ScrollView>

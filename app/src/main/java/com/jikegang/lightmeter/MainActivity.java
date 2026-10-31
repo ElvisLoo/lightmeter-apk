@@ -79,6 +79,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         findViewById(R.id.btnCalc).setOnClickListener(v ->
                 startActivity(new android.content.Intent(this, CalcActivity.class)));
 
+        findViewById(R.id.btnLog).setOnClickListener(v -> openShotLog());
+
         // 恢复态下先把上次读数画出来，不等传感器回调。
         if (pendingLux > 0) updateReadout();
     }
@@ -140,6 +142,36 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             sb.append(String.format(Locale.US, "f/%.1f   →   %s\n", f, fmtShutter(t)));
         }
         recView.setText(sb.toString().trim());
+    }
+
+    /**
+     * 打开拍摄记录页，把当前读数带过去。
+     *
+     * 记录里必须带具体的光圈快门，只有 EV 事后没法直接照着拍。
+     * 选中间那档光圈（f/8 附近）作为"推荐基准"：
+     * 它在景深和进光量之间比较折中，也是绝大多数镜头的画质甜点。
+     */
+    private void openShotLog() {
+        double lux = lastLux;
+        double ev100 = (lux > 0) ? Math.log(lux / 2.5) / Math.log(2) : 0;
+
+        double ape = 8.0;
+        String shutter = "";
+        if (lux > 0) {
+            // 取数组中间那档，比首尾更接近实际会用到的组合
+            ape = F_ARR[F_ARR.length / 2];
+            double M = lux * iso / 250.0;
+            double t = (M > 0) ? ape * ape / M : 0;
+            if (t > 0) shutter = fmtShutter(t);
+        }
+
+        android.content.Intent it = new android.content.Intent(this, LogActivity.class);
+        it.putExtra("lux", lux);
+        it.putExtra("ev", ev100);
+        it.putExtra("iso", iso);
+        it.putExtra("ape", ape);
+        it.putExtra("shutter", shutter);
+        startActivity(it);
     }
 
     String fmtShutter(double t) {
