@@ -162,7 +162,7 @@
                 android:layout_height="wrap_content"
                 android:text="胶片在长曝光下会欠曝。选胶片、填入理论曝光时间，得到实际该曝光多久。"
                 android:textSize="12sp"
-                android:textColor="@color/text_dim"
+                android:textColor="@color/muted"
                 android:layout_marginTop="4dp" />
 
             <Spinner
@@ -204,7 +204,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textSize="12sp"
-                android:textColor="@color/text_dim"
+                android:textColor="@color/muted"
                 android:layout_marginTop="6dp" />
         </LinearLayout>
 
