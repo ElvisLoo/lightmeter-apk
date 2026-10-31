@@ -51,6 +51,11 @@ android {
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_17
         targetCompatibility JavaVersion.VERSION_17
+        // 源码里大量中文注释。中文 Windows 上 javac 默认按 GBK 解码，
+        // 遇到 UTF-8 汉字直接报 "编码 GBK 的不可映射字符"，
+        // 而且报的行号看着完全正常，很难联想到编码问题。
+        // 这里显式声明，不依赖 gradle.properties 里的 -Dfile.encoding。
+        encoding = 'UTF-8'
     }
 }
 
