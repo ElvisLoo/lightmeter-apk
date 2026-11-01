@@ -15,7 +15,9 @@ public class CalcActivity extends AppCompatActivity {
 
     private final double[] SHUTTERS = {
             1.0 / 1000, 1.0 / 500, 1.0 / 250, 1.0 / 125, 1.0 / 60, 1.0 / 30,
-            1.0 / 15, 1.0 / 8, 1.0 / 4, 1.0 / 2, 1, 2, 4, 8
+            1.0 / 15, 1.0 / 8, 1.0 / 4, 1.0 / 2, 1, 2, 4, 8,
+            // 与主界面保持同一组刻度；止于 8 秒会让长曝光被吸附到错误档位
+            15, 30
     };
     private final double[] F_VALS = {2.8, 4, 5.6, 8, 11, 16, 22};
 

@@ -29,7 +29,10 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private final double[] F_ARR = {2.8, 4, 5.6, 8, 11, 16};
     private final double[] SHUTTERS = {
             1.0 / 1000, 1.0 / 500, 1.0 / 250, 1.0 / 125, 1.0 / 60, 1.0 / 30,
-            1.0 / 15, 1.0 / 8, 1.0 / 4, 1.0 / 2, 1, 2, 4, 8
+            1.0 / 15, 1.0 / 8, 1.0 / 4, 1.0 / 2, 1, 2, 4, 8,
+            // 必须补到 30 秒：原来止于 8 秒，夜景/星轨这类长曝光
+            // 会被强行吸附到 8 秒，实际欠曝 1~2 档，而用户不会察觉。
+            15, 30
     };
 
     @Override
