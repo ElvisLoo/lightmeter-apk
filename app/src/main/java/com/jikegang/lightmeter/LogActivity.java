@@ -179,13 +179,38 @@ public class LogActivity extends AppCompatActivity {
 
     // ---------- 存储 ----------
 
+    /**
+     * 读存档。
+     *
+     * 两个坑都踩过：
+     *   1. InputStream.read(byte[]) 不保证一次读完，大文件会只读到前半截，
+     *      解析失败后按「没有记录」处理 —— 用户以为记录全丢了，而且没有任何提示。
+     *   2. 超过上限直接截断更危险：截断的 JSON 一定解析失败，同样是静默丢数据。
+     *      这里改成明确放弃（并保留原文件不动），下次写入会覆盖成有效内容。
+     */
+    private static final int MAX_FILE_BYTES = 512 * 1024;
+
     private String readFile() {
         File f = new File(getFilesDir(), FILE_NAME);
         if (!f.exists()) return null;
+        if (f.length() > MAX_FILE_BYTES) {
+            // 异常大的存档说明有问题（正常 200 条约几十 KB）。
+            // 不去读它，也不删它 —— 让用户下次保存时自然覆盖。
+            return null;
+        }
         try (FileInputStream in = new FileInputStream(f)) {
-            byte[] buf = new byte[(int) Math.min(f.length(), 512 * 1024)];
-            int n = in.read(buf);
-            return n > 0 ? new String(buf, 0, n, "UTF-8") : null;
+            java.io.ByteArrayOutputStream out = new java.io.ByteArrayOutputStream();
+            byte[] chunk = new byte[8192];
+            int n;
+            int total = 0;
+            // 循环读到 EOF，不要假设一次 read 就结束
+            while ((n = in.read(chunk)) > 0) {
+                total += n;
+                if (total > MAX_FILE_BYTES) return null;
+                out.write(chunk, 0, n);
+            }
+            if (total == 0) return null;
+            return out.toString("UTF-8");
         } catch (IOException e) {
             return null;
         }

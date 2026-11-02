@@ -22,6 +22,11 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private TextView luxView, fcView, evView, evIsoView, recView, statusView;
     private int iso = 400;
     private double lastLux = 0;
+    // 刷新节流。光线传感器约 15 次/秒，每次都重算整张推荐表
+    // （6 档光圈 × 字符串格式化）等于每秒 90 次拼接 ——
+    // 手机发热、掉电，而人眼根本分辨不出 5 次/秒和 15 次/秒的差别。
+    private static final long UI_MIN_INTERVAL_MS = 200;
+    private long lastUiAt = 0;
     // 仅用于「恢复出来的」照度：先让界面显示上次的值，等真实回调来了再更新，
     // 避免转屏瞬间闪一屏 EV 0。
     private double pendingLux = -1;
@@ -107,6 +112,9 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     protected void onPause() {
         super.onPause();
         if (light != null) sm.unregisterListener(this);
+        // 节流可能让界面停在 200ms 前的值上，而传感器马上要停。
+        // 这里补一次刷新，保证用户切回来看到的数字和 lastLux 一致。
+        if (lastLux > 0) updateReadout();
     }
 
     @Override
@@ -114,7 +122,13 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         if (e.sensor.getType() == Sensor.TYPE_LIGHT) {
             boolean firstAfterRestore = pendingLux > 0;
             lastLux = e.values[0];
-            updateReadout();
+            // 数值总是立刻更新（下次读到时不会滞后），
+            // 只有界面刷新被节流 —— 保持读数准确，同时不去做无谓的重绘。
+            long now = android.os.SystemClock.elapsedRealtime();
+            if (firstAfterRestore || now - lastUiAt >= UI_MIN_INTERVAL_MS) {
+                lastUiAt = now;
+                updateReadout();
+            }
             if (firstAfterRestore && pendingLux > 0) pendingLux = -1;
             if (firstAfterRestore && statusView != null) {
                 statusView.setText("对准光源，读取实时照度");
